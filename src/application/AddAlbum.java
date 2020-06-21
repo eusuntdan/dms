@@ -1,7 +1,6 @@
-package application;
+package src.application;
 
 import javafx.application.Application;
-import javafx.scene.layout.HBox;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -20,8 +19,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.text.ParseException;
-import java.io.FileReader;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -31,7 +28,7 @@ import org.json.simple.parser.JSONParser;
 
 public class AddAlbum extends Application {
 
-	static String artistName = "anca";
+	static String artistName = UserSession.userName;
 	
 	/// insert albums in the data base
 public static void insertAlbum(String name, String artist, String price) {
@@ -190,11 +187,11 @@ public static void insertAlbum(String name, String artist, String price) {
         alert.show();
     }
 
-    public static void launchAddAlbum(String[] args) {
-    	launch(args);
+    public static void launchAddAlbum() {
+    	launch();
     }
     
     public static void main(String[] args) {
-        launchAddAlbum(args);
+        launchAddAlbum();
     }
 }

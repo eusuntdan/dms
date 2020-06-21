@@ -1,4 +1,4 @@
-package application;
+package src.application;
 
 import javafx.application.Application;
 import javafx.scene.layout.HBox;
@@ -178,8 +178,13 @@ public static void insertComment(String text) {
         alert.initOwner(owner);
         alert.show();
     }
+    
+    public static void launchAddComment() {
+    	launch();
+    }
+    
 
     public static void main(String[] args) {
-        launch(args);
+        launch();
     }
 }

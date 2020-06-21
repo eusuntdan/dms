@@ -1,4 +1,4 @@
-package application;
+package src.test;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -19,8 +19,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.text.ParseException;
-import java.io.FileReader;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -28,67 +26,52 @@ import org.json.simple.parser.JSONParser;
 
 
 
-public class PrintKFC extends Application {
+public class AddAlbumTest extends Application {
+
+	static String artistName = UserSessionTest.userName;
 	
-public static void printAlbums(GridPane gridPane) {
+	/// insert albums in the data base
+public static void insertAlbum(String name, String artist, String price) {
 		
+		JSONArray jsonArray = new JSONArray();
 		JSONParser parser = new JSONParser();
 		
-	try(FileReader reader = new FileReader("albums.json"))
-	{
-		// read
-		Object obj = parser.parse(reader);
-		JSONArray albumList = (JSONArray) obj;
-		
-		// create a table
-		Label nameLabel = new Label("Name");
-        gridPane.add(nameLabel, 0, 1);
-        Label artistLabel = new Label("Artist");
-        gridPane.add(artistLabel, 1, 1);
-        Label priceLabel = new Label("Price");
-        gridPane.add(priceLabel, 2, 1);
-		// iterate
-		albumList.forEach(album -> parseUserObject((JSONObject)album, (GridPane) gridPane));
-	}	
-			
-		catch(FileNotFoundException e) {e.printStackTrace();}
-		catch(IOException e) {e.printStackTrace();}
-		catch(Exception e) {e.printStackTrace();}
-	}
-	
-	static String testUser = "anca";
-	
-	static boolean foundUser = false;
-	
-	static int i = 2;
-	
-	private static void parseUserObject(JSONObject album, GridPane gridPane)
-	{
-		JSONObject userObj = (JSONObject) album.get("album");
-		/// get username, password, user type
-		String readName = (String) userObj.get("name");
-		String readArtist = (String) userObj.get("artist");
-		String readPrice = (String) userObj.get("price");
+		try(Reader reader = new FileReader("albums_test.json"))
 		{
-			if(testUser.equals(readArtist) == true)
-			{
-				foundUser = true;
-				Label nameLabel = new Label(readName);
-            	gridPane.add(nameLabel, 0, i);
-            	Label artistLabel = new Label(readArtist);
-            	gridPane.add(artistLabel, 1, i);
-            	Label priceLabel = new Label(readPrice);
-            	gridPane.add(priceLabel, 2, i);
-            	i++;
-			}
-			return;
+			jsonArray = (JSONArray) parser.parse(reader);
+					
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (org.json.simple.parser.ParseException e) {
+			e.printStackTrace();
 		}
 		
-			
-		//System.out.println(readUser + readPass + readType);
+		JSONObject obj = new JSONObject();
+		obj.put("name", name);
+		obj.put("artist", artist);
+		obj.put("price", price);
+		
+		JSONObject album = new JSONObject();
+		album.put("album", obj);
+		
+		jsonArray.add(album);
+		
+		try(FileWriter file = new FileWriter("albums_test.json"))
+		{
+			file.write(jsonArray.toJSONString());
+			file.flush();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+		System.out.println(obj);
+		
 	}
 	
-	public static String artistName = "anca";
 	
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -140,31 +123,56 @@ public static void printAlbums(GridPane gridPane) {
 
     private void addUIControls(GridPane gridPane) {
         // Add Header
-        Label headerLabel = new Label("List of albums for " + artistName);
+        Label headerLabel = new Label("Add an Album");
         headerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         gridPane.add(headerLabel, 0,0,2,1);
         GridPane.setHalignment(headerLabel, HPos.CENTER);
         GridPane.setMargin(headerLabel, new Insets(20, 0,20,0));
 
+        // Add Name Label
+        Label nameLabel = new Label("Album name : ");
+        gridPane.add(nameLabel, 0,1);
+
+        // Add Name Text Field
+        TextField nameField = new TextField();
+        nameField.setPrefHeight(40);
+        gridPane.add(nameField, 1,1);
+       
+        // Add Price Label
+        Label priceLabel = new Label("Price : ");
+        gridPane.add(priceLabel, 0, 2);
+
+        // Add Price Field
+        TextField priceField = new TextField();
+        priceField.setPrefHeight(40);
+        gridPane.add(priceField, 1, 2);
         
         
         // Add Submit Button
-        Button submitButton = new Button("See songs");
+        Button submitButton = new Button("Submit");
         submitButton.setPrefHeight(40);
         submitButton.setDefaultButton(true);
         submitButton.setPrefWidth(100);
-        gridPane.add(submitButton, 0, 1, 1, 1);
+        gridPane.add(submitButton, 0, 10, 2, 1);
         GridPane.setHalignment(submitButton, HPos.CENTER);
         GridPane.setMargin(submitButton, new Insets(20, 0,20,0));
 
         submitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {                
+            public void handle(ActionEvent event) {
+                if(nameField.getText().isEmpty()) {
+                    showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), "Form Error!", "Please enter the album name");
+                    return;
+                }
+                if(priceField.getText().isEmpty()) {
+                    showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), "Form Error!", "Please enter a price");
+                    return;
+                }
                 
-            	submitButton.setVisible(false);
-                printAlbums(gridPane);
-         	
-                showAlert(Alert.AlertType.INFORMATION, gridPane.getScene().getWindow(), "Succes!", "Here are the albums!");
+                /// insert albums to database
+                	insertAlbum(nameField.getText(), artistName, priceField.getText());  
+                	
+                showAlert(Alert.AlertType.INFORMATION, gridPane.getScene().getWindow(), "Succes!", "Album " + nameField.getText() + " added!");
                 
             }
         });
@@ -179,7 +187,11 @@ public static void printAlbums(GridPane gridPane) {
         alert.show();
     }
 
+    public static void launchAddAlbum() {
+    	launch();
+    }
+    
     public static void main(String[] args) {
-        launch(args);
+        launchAddAlbum();
     }
 }

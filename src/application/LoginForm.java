@@ -1,4 +1,4 @@
-package application;
+package src.application;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -26,7 +26,7 @@ import javafx.stage.Window;
 public class LoginForm extends Application {
 
 	/// remember the user type
-	public static String globalType;
+	//public static String globalType;
 	/// checks for username and password match
 	public static boolean match = false;
 
@@ -60,7 +60,8 @@ public class LoginForm extends Application {
 		if(usr.equals(readUser)) {
 			if(pass.equals(readPass)) {
 				match = true;
-				globalType = readType;
+				UserSession.userName = readUser;
+                UserSession.userType = readType;
 			}
 			return;
 		}
@@ -140,25 +141,7 @@ public class LoginForm extends Application {
         gridPane.add(passwordField, 1, 2);
         
         // Add RadioBox Label
-        
-        Label customerOrArtistLabel = new Label("User type:");
-        gridPane.add(customerOrArtistLabel, 0,3);
-        
-        
-        // Add RadioBox Field
-        final ToggleGroup group = new ToggleGroup();
-                
-        RadioButton customerRadiobox = new RadioButton("Customer");
-        HBox hbox = new HBox(customerRadiobox);
-        gridPane.add(customerRadiobox, 1, 3);
-        customerRadiobox.setToggleGroup(group);
-        customerRadiobox.setSelected(true);
-        
-        RadioButton artistRadiobox = new RadioButton("Artist");
-        HBox hbox2 = new HBox(artistRadiobox);
-        gridPane.add(artistRadiobox, 1, 4);
-        artistRadiobox.setToggleGroup(group);
-        
+      
         // Add Submit Button
         Button submitButton = new Button("Submit");
         submitButton.setPrefHeight(40);
@@ -184,7 +167,21 @@ public class LoginForm extends Application {
                 	showAlert(Alert.AlertType.ERROR, gridPane.getScene().getWindow(), "Database Error!", "Username and Password don't match");
                 	return;
                 }
-                showAlert(Alert.AlertType.INFORMATION, gridPane.getScene().getWindow(), "Registration Successful!", "Welcome " + usernameField.getText());
+                match = false;
+                
+                
+                
+                
+                // opens the next page
+                ShopPage shopPage = new ShopPage();
+            	try {
+            		shopPage.start(new Stage());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+                
+                showAlert(Alert.AlertType.INFORMATION, gridPane.getScene().getWindow(), "Login Successful!", "Welcome, " + usernameField.getText() + "!");
             }
         });
     }
@@ -198,13 +195,13 @@ public class LoginForm extends Application {
         alert.show();
     }
     
-    public static void launchLogin(String[] args)
+    public static void launchLogin()
     {
-    	launch(args);
+    	launch();
     }
 
     public static void main(String[] args) {
-        launchLogin(args);
+        launchLogin();
         
     }
 }

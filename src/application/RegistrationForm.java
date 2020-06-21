@@ -1,4 +1,4 @@
-package application;
+package src.application;
 
 import javafx.application.Application;
 import javafx.scene.layout.HBox;
@@ -37,7 +37,7 @@ public static void insertUser(String username, String password, String type) {
 		JSONArray jsonArray = new JSONArray();
 		JSONParser parser = new JSONParser();
 		
-		try(Reader reader = new FileReader("kfc.json"))
+		try(Reader reader = new FileReader("kfc.json")) 
 		{
 			jsonArray = (JSONArray) parser.parse(reader);
 					
@@ -213,26 +213,26 @@ private static void parseUserObject(JSONObject user, String usr)
 */
         // Add Password Label
         Label passwordLabel = new Label("Password : ");
-        gridPane.add(passwordLabel, 0, 6);
+        gridPane.add(passwordLabel, 0, 2);
 
         // Add Password Field
         PasswordField passwordField = new PasswordField();
         passwordField.setPrefHeight(40);
-        gridPane.add(passwordField, 1, 6);
+        gridPane.add(passwordField, 1, 2);
         
      // Add Password2 Label
         Label passwordLabel2 = new Label("Password again : ");
-        gridPane.add(passwordLabel2, 0, 7);
+        gridPane.add(passwordLabel2, 0, 3);
 
         // Add Password2 Field
         PasswordField passwordField2 = new PasswordField();
         passwordField2.setPrefHeight(40);
-        gridPane.add(passwordField2, 1, 7);
+        gridPane.add(passwordField2, 1, 3);
         
         // Add RadioBox Label
         
         Label customerOrArtistLabel = new Label("User type:");
-        gridPane.add(customerOrArtistLabel, 0,8);
+        gridPane.add(customerOrArtistLabel, 0, 4);
         
         
         // Add RadioBox Field
@@ -310,7 +310,6 @@ private static void parseUserObject(JSONObject user, String usr)
                 	insertUser(usernameField.getText(), passwordField2.getText(), "artist");
                 
                 showAlert(Alert.AlertType.INFORMATION, gridPane.getScene().getWindow(), "Registration Successful!", "Welcome " + usernameField.getText());
-               
             }
         });
     }
@@ -324,11 +323,11 @@ private static void parseUserObject(JSONObject user, String usr)
         alert.show();
     }
     
-    	public static void launchRegister(String []args) {
-    		launch(args);
+    	public static void launchRegister() {
+    		launch();
     	}
     
     public static void main(String[] args) {
-        launchRegister(args);
+        launch(args);
     }
 }
